@@ -6,6 +6,6 @@ namespace Convertor.Interfaces
 {
     public interface IImageWriter
     {
-        public void Write(string path);
+        public void Write(string path, Image.Image image);
     }
 }
