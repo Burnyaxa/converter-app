@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Convertor.Interfaces
+namespace Converter.Interfaces
 {
     public interface IImageReader
     {

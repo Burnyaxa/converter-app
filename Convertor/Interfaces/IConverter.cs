@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Convertor.Image;
-namespace Convertor.Interfaces
+
+namespace Converter.Interfaces
 {
     public interface IConverter
     {
