@@ -6,8 +6,7 @@ namespace Convertor.Image
 {
     public abstract class Image
     {
-        public abstract int Height { get; set; }
-        public abstract int Width { get; set; }
+        public abstract Header Header { get; set; }
         public abstract string Path { get; set; }
     }
 }
