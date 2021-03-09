@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Converter.ImageBase;
 
 namespace Converter.Interfaces
 {
     public interface IImageWriter
     {
-        public void Write(string path, Image.Image image);
+        public void Write(string path, Image image);
     }
 }

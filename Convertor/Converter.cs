@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Converter.ImageBase;
 using Converter.Interfaces;
 
 namespace Converter
@@ -16,7 +17,7 @@ namespace Converter
             _writer = writer;
         }
 
-        public Image.Image Convert(Image.Image image)
+        public Image Convert(Image image)
         {
             throw new NotImplementedException();
         }

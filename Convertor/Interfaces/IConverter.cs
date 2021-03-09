@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Converter.ImageBase;
 
 namespace Converter.Interfaces
 {
     public interface IConverter
     {
-        public Image.Image Convert(Image.Image image);
+        public Image Convert(Image image);
     }
 }
