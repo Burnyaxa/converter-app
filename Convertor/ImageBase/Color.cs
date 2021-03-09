@@ -1,4 +1,4 @@
-﻿namespace Converter.Image
+﻿namespace Converter.ImageBase
 {
     public class Color
     {
