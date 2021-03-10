@@ -34,6 +34,24 @@ namespace Converter
             byte pixelAspectRatio = 0;
             writer.Write(pixelAspectRatio);
 
+            for (int i = 0; i < tableSize; i++)
+            {
+                if (i < table.Length)
+                {
+                    writer.Write((byte)table[i].R);
+                    writer.Write((byte)table[i].G);
+                    writer.Write((byte)table[i].B);
+                }
+                else
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+                        writer.Write((byte)0);
+                    }
+                }
+            }
+
+
 
         }
 
