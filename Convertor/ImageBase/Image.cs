@@ -4,6 +4,6 @@
     {
         public abstract Header Header { get; set; }
         public abstract string Path { get; set; }
-        public abstract Color[][] Bitmap { get; set; }
+        public abstract Color[,] Bitmap { get; set; }
     }
 }
