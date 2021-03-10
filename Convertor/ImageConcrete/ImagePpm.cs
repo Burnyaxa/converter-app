@@ -7,8 +7,8 @@ namespace Converter.ImageConcrete
 {
     public class ImagePpm : Image
     {
-        public override Header Header { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public override string Path { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public override Color[][] Bitmap { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public override Header Header { get; set; }
+        public override string Path { get; set; }
+        public override Color[,] Bitmap { get; set; }
     }
 }

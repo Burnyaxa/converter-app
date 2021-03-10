@@ -8,22 +8,24 @@ using System.Text;
 
 namespace Converter.Readers
 {
-    abstract class ReaderBase : IImageReader
+    public abstract class ReaderBase : Interfaces.IReaderBase
     {
+        protected string _filePath { get; private set; }
         public Image Read(string path)
         {
-            FileStream imgFile = OpenBinary(path);
+            _filePath = path;
+            BinaryReader imgFile = OpenBinary(path);
             Header header = ReadHeader(imgFile);
             var colors = ReadColors(header, imgFile);
             return new ImagePpm() { Path = path, Header = header, Bitmap=colors};
         }
 
-        public virtual FileStream OpenBinary(string path)
+        public virtual BinaryReader OpenBinary(string path)
         {
-            return new FileStream(path, FileMode.Open);
+            BinaryReader reader = new BinaryReader(new FileStream(path, FileMode.Open));
+            return reader;
         }
-
-        public abstract Header ReadHeader(FileStream imgFile);
-        public abstract Color[][] ReadColors(Header header, FileStream imgFile);
+        public abstract Header ReadHeader(BinaryReader imgFile);
+        public abstract Color[,] ReadColors(Header header, BinaryReader imgFile);
     }
 }

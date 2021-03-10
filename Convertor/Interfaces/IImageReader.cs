@@ -5,7 +5,7 @@ using Converter.ImageBase;
 
 namespace Converter.Interfaces
 {
-    public interface IImageReader
+    public interface IReaderBase
     {
         public Image Read(string path);
     }
