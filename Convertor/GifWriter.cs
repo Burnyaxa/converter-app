@@ -15,8 +15,8 @@ namespace Converter
 
             writer.Write("GIF87a");
 
-            writer.Write((short)image.Header.Width);
-            writer.Write((short)image.Header.Height);
+            writer.Write(image.Header.Width);
+            writer.Write(image.Header.Height);
 
             byte packedField = Convert.ToByte("11110111", 2);
             writer.Write(packedField);
