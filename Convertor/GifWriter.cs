@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Converter.BytePackers;
+using Converter.Compressors;
 using Converter.ImageBase;
 using Converter.Interfaces;
 
@@ -10,6 +12,7 @@ namespace Converter
 {
     public class GifWriter : IImageWriter
     {
+        public const byte MinCodeSize = 8;
         public void Write(string path, Image image)
         {
             Color[,] colors = GetColors(image.Bitmap);
@@ -18,8 +21,13 @@ namespace Converter
             byte power = (byte) ((byte) Math.Log2(tableSize) - 1);
             string stringPower = Convert.ToString(power, 2);
 
-            using BinaryWriter writer = new BinaryWriter(File.Open(path + ".gif", FileMode.Create));
+            List<int> codes = LzwCompressor.Compress(colors, table, tableSize);
+            List<byte> bytes = LZWBytePacker.PackBytes(codes, (byte) (power + 1 < 2 ? 2 : power + 1));
+            byte fullBlock = 255;
+            int fullBlockQuantity = bytes.Count / fullBlock;
+            int partialBlockCount = bytes.Count % fullBlock;
 
+            using BinaryWriter writer = new BinaryWriter(File.Open(path + ".gif", FileMode.Create));
             writer.Write("GIF87a");
 
             writer.Write(image.Header.Width);
@@ -62,10 +70,33 @@ namespace Converter
             byte imagePackedField = Convert.ToByte("00000000", 2);
             writer.Write(imagePackedField);
 
+            writer.Write(power + 1 < 2 ? 2 : power + 1);
 
+            for (int i = 0; i < fullBlockQuantity; i++)
+            {
+                writer.Write(fullBlock);
+                for (int j = 0; j < fullBlock; j++)
+                {
+                    writer.Write(bytes[j]);
+                }
+            }
 
+            if (partialBlockCount != 0)
+            {
+                writer.Write(partialBlockCount);
+                for (int i = 0; i < partialBlockCount; i++)
+                {
+                    writer.Write(bytes[i]);
+                }
+            }
 
+            byte blockTerminator = 0;
 
+            writer.Write(blockTerminator);
+
+            byte trailer = 59;
+
+            writer.Write(trailer);
         }
 
         private static Color[,] GetColors(Color[,] colors)
