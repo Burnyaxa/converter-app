@@ -51,6 +51,19 @@ namespace Converter
                 }
             }
 
+            byte imageSeparator = 44;
+            writer.Write(imageSeparator);
+            short imageLeft = 0;
+            writer.Write(imageLeft);
+            short imageRight = 0;
+            writer.Write(imageRight);
+            writer.Write(image.Header.Width);
+            writer.Write(image.Header.Height);
+            byte imagePackedField = Convert.ToByte("00000000", 2);
+            writer.Write(imagePackedField);
+
+
+
 
 
         }
