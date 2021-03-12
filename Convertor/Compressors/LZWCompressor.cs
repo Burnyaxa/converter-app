@@ -8,6 +8,7 @@ namespace Converter.Compressors
 {
     public static class LzwCompressor
     {
+        private static Dictionary<int, List<int>> dictionary;
 
         public static List<int> Compress(Color[,] colors, Color[] table, int tableSize)
         {
@@ -19,23 +20,16 @@ namespace Converter.Compressors
                     y.R == x.R &&
                     y.G == x.G)).ToList();
 
-            Dictionary<int, List<int>> dictionary = new Dictionary<int, List<int>>();
-
-            for (int i = 0; i < tableSize; i++)
-            {
-                dictionary.Add(i, new List<int>(){i});
-            }
-
-            dictionary.Add(tableSize, new List<int>(){tableSize});
-            dictionary.Add(tableSize + 1, new List<int>(){tableSize + 1});
-
+            Initialize(tableSize);
+           
+            codeStream.Add(tableSize);
             int index = 0;
 
-            List<int> buffer = new List<int>() {indexStream[index + 1]};
+            List<int> buffer = new List<int>() {indexStream[index]};
 
             for (int i = index + 1; i < indexStream.Count; i++)
             {
-                List<int> code = new List<int>() { indexStream[index + 1] };
+                List<int> code = new List<int>() { indexStream[i] };
 
                 List<int> bufferWithCode = buffer.Concat(code).ToList();
 
@@ -47,6 +41,14 @@ namespace Converter.Compressors
                 {
                     dictionary.Add(dictionary.Count, bufferWithCode);
                     codeStream.Add(GetCode(dictionary, buffer));
+
+                    if (dictionary.Count == 4096)
+                    {
+                        Initialize(tableSize);
+                        codeStream.Add(tableSize);
+                        buffer = new List<int>() {indexStream[i]};
+                        continue;
+                    }
                     buffer = code;
                 }
             }
@@ -60,6 +62,18 @@ namespace Converter.Compressors
         private static int GetCode(Dictionary<int, List<int>> dictionary, List<int> sequence)
         {
             return dictionary.Keys.FirstOrDefault(key => dictionary[key].SequenceEqual(sequence));
+        }
+
+        private static void Initialize(int tableSize)
+        {
+            dictionary = new Dictionary<int, List<int>>();
+            for (int i = 0; i < tableSize; i++)
+            {
+                dictionary.Add(i, new List<int>() { i });
+            }
+
+            dictionary.Add(tableSize, new List<int>() { tableSize });
+            dictionary.Add(tableSize + 1, new List<int>() { tableSize + 1 });
         }
     }
 }

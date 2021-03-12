@@ -12,28 +12,37 @@ namespace Converter
 {
     public class GifWriter : IImageWriter
     {
-        public const byte MinCodeSize = 8;
+        
         public void Write(string path, Image image)
         {
             Color[,] colors = GetColors(image.Bitmap);
             Color[] table = GetTable(colors);
+
             int tableSize = AlignToPowerOfTwo(table.Length);
             byte power = (byte) ((byte) Math.Log2(tableSize) - 1);
-            string stringPower = Convert.ToString(power, 2);
+            string stringPower =  Convert.ToString(power, 2).PadLeft(3, '0');
 
             List<int> codes = LzwCompressor.Compress(colors, table, tableSize);
-            List<byte> bytes = LZWBytePacker.PackBytes(codes, (byte) (power + 1 < 2 ? 2 : power + 1));
+            byte minCodeSize = (byte) (power + 1 < 2 ? 2 : power + 1);
+
+            List<byte> bytes = LZWBytePacker.PackBytes(codes, minCodeSize);
             byte fullBlock = 255;
+
             int fullBlockQuantity = bytes.Count / fullBlock;
-            int partialBlockCount = bytes.Count % fullBlock;
+            byte partialBlockCount = (byte)(bytes.Count % fullBlock);
 
             using BinaryWriter writer = new BinaryWriter(File.Open(path + ".gif", FileMode.Create));
-            writer.Write("GIF87a");
 
+            writer.Write('G');
+            writer.Write('I');
+            writer.Write('F');
+            writer.Write('8');
+            writer.Write('9');
+            writer.Write('a');
             writer.Write(image.Header.Width);
             writer.Write(image.Header.Height);
 
-            byte packedField = Convert.ToByte("11110" + stringPower, 2);
+            byte packedField = Convert.ToByte("1" + stringPower + "0" + stringPower, 2);
             writer.Write(packedField);
 
             byte bgColorIndex = 0;
@@ -70,14 +79,14 @@ namespace Converter
             byte imagePackedField = Convert.ToByte("00000000", 2);
             writer.Write(imagePackedField);
 
-            writer.Write(power + 1 < 2 ? 2 : power + 1);
+            writer.Write(minCodeSize);
 
             for (int i = 0; i < fullBlockQuantity; i++)
             {
                 writer.Write(fullBlock);
                 for (int j = 0; j < fullBlock; j++)
                 {
-                    writer.Write(bytes[j]);
+                    writer.Write(bytes[i * fullBlock + j]);
                 }
             }
 
@@ -86,7 +95,7 @@ namespace Converter
                 writer.Write(partialBlockCount);
                 for (int i = 0; i < partialBlockCount; i++)
                 {
-                    writer.Write(bytes[i]);
+                    writer.Write(bytes[fullBlockQuantity * fullBlock + i]);
                 }
             }
 
@@ -110,9 +119,13 @@ namespace Converter
             {
                 for (int j = 0; j < columns; j++)
                 {
-                    result[i, j].R = (colors[i, j].R * 8) / 256;
-                    result[i, j].G = (colors[i, j].G * 8) / 256;
-                    result[i, j].B = (colors[i, j].B * 4) / 256;
+                    result[i, j] = new Color()
+                    {
+                        R = (colors[i, j].R * 8 / 256) * 36 ,
+                        G = (colors[i, j].G * 8 / 256) * 36,
+                        B = (colors[i, j].B * 4 / 256) * 72
+                    };
+
                 }
             }
 
@@ -135,7 +148,7 @@ namespace Converter
         {
             int minValue = 2;
 
-            while (minValue <= length)
+            while (minValue < length)
             {
                 minValue *= 2;
             }
