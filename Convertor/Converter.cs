@@ -8,18 +8,16 @@ namespace Converter
 {
     public class Converter : IConverter
     {
-        private IImageReader _reader;
-        private IImageWriter _writer;
+        private readonly IImageWriter _writer;
 
-        public Converter(IImageReader reader, IImageWriter writer)
+        public Converter(IImageWriter writer)
         {
-            _reader = reader;
             _writer = writer;
         }
 
-        public Image Convert(Image image)
+        public void Convert(Image image, string destinationPath)
         {
-            throw new NotImplementedException();
+            _writer.Write(destinationPath, image);
         }
     }
 }

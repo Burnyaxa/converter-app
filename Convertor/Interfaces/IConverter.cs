@@ -7,6 +7,6 @@ namespace Converter.Interfaces
 {
     public interface IConverter
     {
-        public Image Convert(Image image);
+        public void Convert(Image image, string destinationPath);
     }
 }
