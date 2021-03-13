@@ -15,14 +15,11 @@ namespace Converter.Readers
     {
         public IImageReader Create(ImageType imageType)
         {
-            switch (imageType)
+            return imageType switch
             {
-                case ImageType.Ppm:
-                    return new PpmReader();
-                default:
-                    return null;
-
-            }
+                ImageType.Ppm => new PpmReader(),
+                _ => null
+            };
         }
     }
 }

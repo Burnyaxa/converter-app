@@ -10,13 +10,11 @@ namespace Converter.Writers
     {
         public IImageWriter Create(ImageType imageType)
         {
-            switch (imageType)
+            return imageType switch
             {
-                case ImageType.Gif:
-                    return new GifWriter();
-                default:
-                    return null;
-            }
+                ImageType.Gif => new GifWriter(),
+                _ => null
+            };
         }
     }
 }

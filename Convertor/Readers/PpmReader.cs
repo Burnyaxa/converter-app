@@ -13,13 +13,11 @@ namespace Converter.Readers
         delegate int ReadSymbol();
         public override Color[,] ReadColors(Header header, BinaryReader imgFile)
         {
-            switch (((HeaderPpm)header).FormatType)
+            return ((HeaderPpm) header).FormatType switch
             {
-                case "P6":
-                    return ReadP6(header, imgFile);
-                default:
-                    return null;
-            }
+                "P6" => ReadP6(header, imgFile),
+                _ => null
+            };
         }
 
         public override Header ReadHeader(BinaryReader imgFile)
@@ -75,11 +73,11 @@ namespace Converter.Readers
 
             if (header.BitsPerComponent > 255)
             {
-                readSymbol = () => { return imgFile.ReadInt16(); };
+                readSymbol = () => imgFile.ReadInt16();
             }
             else
             {
-                readSymbol = () => { return imgFile.ReadByte(); };
+                readSymbol = () => imgFile.ReadByte();
             }
 
             Color[,] colors = new Color[header.Width, header.Height];
@@ -101,7 +99,7 @@ namespace Converter.Readers
             }
             catch (Exception)
             {
-                Console.WriteLine("BAAAD File XD");
+                Console.WriteLine("Bad File XD");
             }
             finally
             {
