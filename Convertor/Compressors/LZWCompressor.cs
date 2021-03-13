@@ -9,6 +9,7 @@ namespace Converter.Compressors
     public static class LzwCompressor
     {
         private static Dictionary<int, List<int>> dictionary;
+        private const int MaxDictionarySize = 4096;
 
         public static List<int> Compress(Color[,] colors, Color[] table, int tableSize)
         {
@@ -40,9 +41,9 @@ namespace Converter.Compressors
                 else
                 {
                     dictionary.Add(dictionary.Count, bufferWithCode);
-                    codeStream.Add(GetCode(dictionary, buffer));
+                    codeStream.Add(GetCode(buffer));
 
-                    if (dictionary.Count == 4096)
+                    if (dictionary.Count == MaxDictionarySize)
                     {
                         Initialize(tableSize);
                         codeStream.Add(tableSize);
@@ -53,13 +54,13 @@ namespace Converter.Compressors
                 }
             }
             
-            codeStream.Add(GetCode(dictionary, buffer));
+            codeStream.Add(GetCode(buffer));
             codeStream.Add(dictionary[tableSize + 1].First());
 
             return codeStream;
         }
 
-        private static int GetCode(Dictionary<int, List<int>> dictionary, List<int> sequence)
+        private static int GetCode(List<int> sequence)
         {
             return dictionary.Keys.FirstOrDefault(key => dictionary[key].SequenceEqual(sequence));
         }
