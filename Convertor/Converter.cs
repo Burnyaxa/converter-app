@@ -8,10 +8,10 @@ namespace Converter
 {
     public class Converter : IConverter
     {
-        private IReaderBase _reader;
+        private IImageReader _reader;
         private IImageWriter _writer;
 
-        public Converter(IReaderBase reader, IImageWriter writer)
+        public Converter(IImageReader reader, IImageWriter writer)
         {
             _reader = reader;
             _writer = writer;
