@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Converter.Readers
 {
-    public abstract class ReaderBase : Interfaces.IReaderBase
+    public abstract class ReaderBase : Interfaces.IImageReader
     {
         protected string _filePath { get; private set; }
         public Image Read(string path)

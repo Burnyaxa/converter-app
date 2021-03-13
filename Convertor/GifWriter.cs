@@ -31,7 +31,16 @@ namespace Converter
             int fullBlockQuantity = bytes.Count / fullBlock;
             byte partialBlockCount = (byte)(bytes.Count % fullBlock);
 
-            using BinaryWriter writer = new BinaryWriter(File.Open(path + ".gif", FileMode.Create));
+            BinaryWriter writer;
+            try
+            {
+                writer = new BinaryWriter(File.Open(path + ".gif", FileMode.Create));
+            }
+            catch (Exception)
+            {
+                throw new InvalidOperationException("This File Already exists.");
+            }
+            
 
             writer.Write('G');
             writer.Write('I');
@@ -39,8 +48,8 @@ namespace Converter
             writer.Write('8');
             writer.Write('9');
             writer.Write('a');
-            writer.Write(image.Header.Width);
-            writer.Write(image.Header.Height);
+            writer.Write((short)image.Header.Width);
+            writer.Write((short)image.Header.Height);
 
             byte packedField = Convert.ToByte("1" + stringPower + "0" + stringPower, 2);
             writer.Write(packedField);
@@ -74,8 +83,8 @@ namespace Converter
             writer.Write(imageLeft);
             short imageRight = 0;
             writer.Write(imageRight);
-            writer.Write(image.Header.Width);
-            writer.Write(image.Header.Height);
+            writer.Write((short)image.Header.Width);
+            writer.Write((short)image.Header.Height);
             byte imagePackedField = Convert.ToByte("00000000", 2);
             writer.Write(imagePackedField);
 
@@ -106,6 +115,8 @@ namespace Converter
             byte trailer = 59;
 
             writer.Write(trailer);
+
+            writer.Close();
         }
 
         private static Color[,] GetColors(Color[,] colors)
