@@ -5,6 +5,8 @@
         public int R { get; set; }
         public int G { get; set; }
         public int B { get; set; }
-        public int A { get; set; }
+        // not all the formats support this component
+        // reasonable to make it nulllable
+        public int? A { get; set; }
     }
 }
