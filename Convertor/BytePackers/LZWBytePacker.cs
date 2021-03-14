@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Converter.BytePackers
 {
-    public static class LZWBytePacker
+    public static class LzwBytePacker
     {
         private static int _currentCodeWidth;
         private static int _codeIndex;

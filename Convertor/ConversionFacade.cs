@@ -17,34 +17,25 @@ namespace Converter
             ImageType originalType;
             ImageType finalType;
 
-            //try
-            //{
+            try
+            {
                 originalType = (ImageType)Enum.Parse(typeof(ImageType), originalTypeStr, true);
                 finalType = (ImageType)Enum.Parse(typeof(ImageType), outputFormat, true);
-            //}
-            //catch (Exception)
-            //{
-            //    Console.WriteLine("Unsupported Image Type");
-            //    return;
-            //}            
+            }
+            catch (Exception)
+            {
+                throw new InvalidOperationException("Unsupported Image Type");
+            }            
             
             IFactory<IImageReader> readerFactory = new ReaderFactory();
             IFactory<IImageWriter> writerFactory = new WriterFactory();
-            IImageReader reader;
-            IImageWriter writer;
+            IImageReader reader = readerFactory.Create(originalType);
+            IImageWriter writer = writerFactory.Create(finalType);
+                
+            Image image = reader.Read(originalPath);
+            Converter converter = new Converter(writer);
+            converter.Convert(image, destinationPath);
 
-            //try
-            //{
-                reader = readerFactory.Create(originalType);
-                writer = writerFactory.Create(finalType);
-                Image image = reader.Read(originalPath);
-                Converter converter = new Converter(writer);
-                converter.Convert(image, destinationPath);
-            //}
-            //catch (InvalidOperationException e)
-            //{
-            //    Console.WriteLine("You Fool! File Allready Exists! Stonp\n" +e.Message);
-            //}
              
             string GetExtension(string path)
             {

@@ -10,10 +10,10 @@ namespace Converter.Readers
 {
     public abstract class ReaderBase : Interfaces.IImageReader
     {
-        protected string _filePath { get; private set; }
+        protected string FilePath { get; private set; }
         public Image Read(string path)
         {
-            _filePath = path;
+            FilePath = path;
             BinaryReader imgFile = OpenBinary(path);
             Header header = ReadHeader(imgFile);
             var colors = ReadColors(header, imgFile);

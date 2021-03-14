@@ -10,21 +10,13 @@ namespace ConsoleInterface
     {
         public static (string source, string destination, string format) GetValues(string[] args)
         {
-            try
+            var source = ParseArgument("--source", args);
+            var outputFormat = ParseArgument("--goal-format", args);
+            if (!TryParseArgument("--output", args, out var output))
             {
-                var source = ParseArgument("--source", args);
-                var outputFormat = ParseArgument("--goal-format", args);
-                if (!TryParseArgument("--output", args, out var output))
-                {
-                    output = source.Substring(0, source.LastIndexOf('.'));
-                }
-                return (source, output, outputFormat);
+                output = source.Substring(0, source.LastIndexOf('.'));
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                throw;
-            }
+            return (source, output, outputFormat);
         }
 
         private static string ParseArgument(string parameter, string[] args)

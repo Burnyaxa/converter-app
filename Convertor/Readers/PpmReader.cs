@@ -26,8 +26,8 @@ namespace Converter.Readers
             string type = String.Concat(imgFile.ReadChars(2));
             header.FormatType = type;
 
+            imgFile.ReadChar();
             char currentSymbol = imgFile.ReadChar();
-            currentSymbol = imgFile.ReadChar();
             // processing comments
             while (currentSymbol == '#')
             {
@@ -43,13 +43,9 @@ namespace Converter.Readers
             {
                 header.BitsPerComponent = 8;
             }
-            else if(header.MaxNumPerColor <= Int16.MaxValue)
+            else if(header.MaxNumPerColor <= short.MaxValue)
             {
                 header.BitsPerComponent = 16;
-            }
-            else if (header.MaxNumPerColor <= Int32.MaxValue)
-            {
-                header.BitsPerComponent = 32;
             }
 
             return header;
@@ -69,17 +65,6 @@ namespace Converter.Readers
 
         private Color[,] ReadP6(Header header, BinaryReader imgFile)
         {
-            ReadSymbol readSymbol;
-
-            if (header.BitsPerComponent > 255)
-            {
-                readSymbol = () => imgFile.ReadInt16();
-            }
-            else
-            {
-                readSymbol = () => imgFile.ReadByte();
-            }
-
             Color[,] colors = new Color[header.Width, header.Height];
 
             try
@@ -99,12 +84,13 @@ namespace Converter.Readers
             }
             catch (Exception)
             {
-                Console.WriteLine("Bad File XD");
+                throw new InvalidOperationException("Bad File XD");
             }
             finally
             {
                 imgFile.Close();
             }
+
             NormalizeTo255(colors, (HeaderPpm)header);
 
             imgFile.Close();

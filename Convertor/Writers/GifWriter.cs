@@ -38,7 +38,7 @@ namespace Converter.Writers
             List<int> codes = LzwCompressor.Compress(colors, table, tableSize);
             byte minCodeSize = (byte) (power + 1 < 2 ? 2 : power + 1);
 
-            List<byte> bytes = LZWBytePacker.PackBytes(codes, minCodeSize);
+            List<byte> bytes = LzwBytePacker.PackBytes(codes, minCodeSize);
             byte fullBlock = 255;
 
             int fullBlockQuantity = bytes.Count / fullBlock;
