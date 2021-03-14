@@ -5,8 +5,8 @@ using System.Text;
 
 namespace Converter.Interfaces
 {
-    public interface IFactory<CreationType>
+    public interface IFactory<out TCreationType>
     {
-        CreationType Create(ImageType imageType);
+        TCreationType Create(ImageType imageType);
     }
 }
