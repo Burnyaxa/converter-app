@@ -8,11 +8,13 @@ namespace Converter.Renderers
 {
     public class Renderer
     {
-        private readonly ICameraPositionProvider _provider;
+        private readonly ICameraPositionProvider _positionProvider;
+        private readonly ICameraDirectionProvider _directionProvider;
 
-        public Renderer(ICameraPositionProvider provider)
+        public Renderer(ICameraPositionProvider positionProvider, ICameraDirectionProvider directionProvider)
         {
-            _provider = provider;
+            _positionProvider = positionProvider;
+            _directionProvider = directionProvider;
         }
 
 
