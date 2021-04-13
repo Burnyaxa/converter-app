@@ -11,6 +11,8 @@ namespace Converter.Models
         public Vector3 B { get; set; }
         public Vector3 C { get; set; }
 
+
+
         public Vector3 Center => new Vector3((A.X + B.X + C.X) / 3, (A.Y + B.Y + C.Y) / 3, (A.Z + B.Z + C.Z) / 3);
 
         public Triangle(Vector3 a, Vector3 b, Vector3 c)

@@ -6,7 +6,7 @@ using Converter.Interfaces;
 
 namespace Converter.Renderers
 {
-    public class Renderer
+    public class Renderer : IRenderer
     {
         private readonly ICameraPositionProvider _positionProvider;
         private readonly ICameraDirectionProvider _directionProvider;
@@ -18,5 +18,9 @@ namespace Converter.Renderers
         }
 
 
+        public Vector3[,] Render()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
