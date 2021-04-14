@@ -30,6 +30,14 @@ namespace Converter.Models
             return Vector3.Normalize(cross);
         }
 
+        public float Dot()
+        {
+            Vector3 first = B - A;
+            Vector3 second = C - A;
+            Vector3 cross = Vector3.Cross(first, second);
+            return Vector3.Dot(first, cross);
+        }
+
         public static bool operator ==(Triangle first, Triangle second)
         {
             return first.A == second.A && first.B == second.B && first.C == second.C;

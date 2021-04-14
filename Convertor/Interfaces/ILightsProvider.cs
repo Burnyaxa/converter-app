@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Numerics;
 using System.Text;
 using Converter.Models;
 
 namespace Converter.Interfaces
 {
-    public interface IRenderer
+    public interface ILightsProvider
     {
-        public Vector3[,] Render(List<Triangle> triangles);
+        public List<Light> GetLights();
     }
 }
