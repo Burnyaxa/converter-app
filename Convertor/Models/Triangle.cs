@@ -11,15 +11,22 @@ namespace Converter.Models
         public Vector3 B { get; set; }
         public Vector3 C { get; set; }
 
+        public Vector3 N0 { get; set; }
+        public Vector3 N1 { get; set; }
+        public Vector3 N2 { get; set; }
+
 
 
         public Vector3 Center => new Vector3((A.X + B.X + C.X) / 3, (A.Y + B.Y + C.Y) / 3, (A.Z + B.Z + C.Z) / 3);
 
-        public Triangle(Vector3 a, Vector3 b, Vector3 c)
+        public Triangle(Vector3 a, Vector3 b, Vector3 c, Vector3 n0, Vector3 n1, Vector3 n2)
         {
             A = a;
             B = b;
             C = c;
+            N0 = n0;
+            N1 = n1;
+            N2 = n2;
         }
 
         public Vector3 NormVector()
@@ -30,11 +37,11 @@ namespace Converter.Models
             return Vector3.Normalize(cross);
         }
 
-        public float Dot()
+        public float Dot(Vector3 dir)
         {
             Vector3 first = B - A;
             Vector3 second = C - A;
-            Vector3 cross = Vector3.Cross(first, second);
+            Vector3 cross = Vector3.Cross(dir, second);
             return Vector3.Dot(first, cross);
         }
 

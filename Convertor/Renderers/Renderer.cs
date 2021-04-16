@@ -42,33 +42,35 @@ namespace Converter.Renderers
                     ProcessColor(ref result[x, y].Z);
                 });
             });
-
-            return result;
+            
+            var resultReversed = new Vector3[_screenProvider.GetHeight(), _screenProvider.GetWidth()];
+            for (int i = 0; i < _screenProvider.GetHeight(); i++)
+            {
+                for (int j = 0; j < _screenProvider.GetWidth(); j++)
+                {
+                    resultReversed[i, j] = result[_screenProvider.GetHeight() - i - 1, _screenProvider.GetWidth() - j - 1];
+                }
+            }
+            
+            return resultReversed;
 
             void ProcessPixel(int height, int width)
             {
-                float x = (float)(((2 * (width + 0.5)) / _screenProvider.GetWidth() - 1f) *
-                           Math.Tan(_screenProvider.GetFov() / 2f) *
-                           _screenProvider.GetWidth()) /
-                           _screenProvider.GetHeight();
-
-                float z = -((2f * (height + 0.5f)) / _screenProvider.GetHeight() - 1f) * 
-                          (float)Math.Tan(_screenProvider.GetFov() / 2f);
-
-
                 float minDistance = Single.MaxValue;
                 var currentColor = _colorProvider.GetBackgroundColor();
                 foreach (var triangle in triangles)
                 {
                     CastRay(_positionProvider.GetCamera(),
-                        _directionProvider.GetCameraDirection(),
+                        _directionProvider.GetCameraDirection(height, width,
+                            _screenProvider.GetHeight(), _screenProvider.GetWidth(),
+                            _screenProvider.GetFov()),
                         triangle,
                         _lightsProvider.GetLights(),
                         out var hit,
                         out var color);
 
                     var distance = Vector3.Distance(hit, _positionProvider.GetCamera());
-
+                    
                     if (minDistance > distance && color != _colorProvider.GetBackgroundColor())
                     {
                         minDistance = distance;
@@ -84,8 +86,11 @@ namespace Converter.Renderers
                 t = 0;
                 u = 0;
                 v = 0;
-
-                var det = triangle.Dot();
+                Vector3 first = triangle.B - triangle.A;
+                Vector3 second = triangle.C - triangle.A;
+                Vector3 pvector = Vector3.Cross(direction, second);
+                
+                float det = Vector3.Dot(first, pvector);
 
                 if (det < Epsilon && det > -Epsilon)
                 {
@@ -95,7 +100,6 @@ namespace Converter.Renderers
                 float invertedDet = 1f / det;
 
                 var tvector = vector - triangle.A;
-                var pvector = Vector3.Cross(direction, triangle.C - triangle.A);
 
                 u = Vector3.Dot(tvector, pvector) * invertedDet;
 
@@ -104,7 +108,7 @@ namespace Converter.Renderers
                     return false;
                 }
 
-                var qvector = Vector3.Cross(tvector, triangle.B - triangle.A);
+                var qvector = Vector3.Cross(tvector, first);
 
                 v = Vector3.Dot(direction, qvector) * invertedDet;
 
@@ -113,8 +117,7 @@ namespace Converter.Renderers
                     return false;
                 }
 
-                t = Vector3.Dot(triangle.C - triangle.A, qvector) * invertedDet;
-
+                t = Vector3.Dot(second, qvector) * invertedDet;
                 return true;
             }
 
@@ -128,7 +131,7 @@ namespace Converter.Renderers
                 if (intersecting)
                 {
                     hit = vector + direction * t;
-                    normal = triangle.A * (1f - u - v) + triangle.B * u + triangle.C * v;
+                    normal = triangle.N0 * (1f - u - v) + triangle.N1 * u + triangle.N2 * v;
                     return true;
                 }
 
@@ -189,9 +192,9 @@ namespace Converter.Renderers
         {
             Vector3[,] result = new Vector3[_screenProvider.GetHeight(),_screenProvider.GetWidth()];
 
-            for (int i = 0; i < result.GetLength(1); i++)
+            for (int i = 0; i < result.GetLength(0); i++)
             {
-                for (int j = 0; j < result.GetLength(2); j++)
+                for (int j = 0; j < result.GetLength(1); j++)
                 {
                     result[i, j] = _colorProvider.GetBackgroundColor();
                 }

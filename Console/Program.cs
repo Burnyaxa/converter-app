@@ -9,6 +9,11 @@ namespace ConsoleInterface
         {
             try
             {
+                args = new string[]{
+                    "--source=cow.obj",
+                    "--goal-format=gif",
+                    "--output=newcow"
+                };
                 var value = KeyHandler.GetValues(args);
                 ConversionFacade.InitiateConversion(value.source, value.destination, value.format);
             }

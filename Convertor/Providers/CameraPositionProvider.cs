@@ -10,7 +10,7 @@ namespace Converter.Providers
     {
         public Vector3 GetCamera()
         {
-            return Vector3.Zero;
+            return new Vector3(0, 2, 0);
         }
     }
 }

@@ -3,9 +3,13 @@ using Converter.Interfaces;
 using Converter.Readers;
 using Converter.Writers;
 using System;
+using System.Drawing;
 using System.Linq;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 using System.Text;
+using Color = System.Drawing.Color;
 
 namespace Converter
 {
@@ -32,11 +36,23 @@ namespace Converter
             IImageReader reader = readerFactory.Create(originalType);
             IImageWriter writer = writerFactory.Create(finalType);
                 
-            Image image = reader.Read(originalPath);
+            var image = reader.Read(originalPath);
             Converter converter = new Converter(writer);
             converter.Convert(image, destinationPath);
+            
+            Bitmap pic = new Bitmap(image.Header.Width, image.Header.Height, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
 
-             
+            for (int i = 0; i < image.Header.Height; i++)
+            {
+                for (int j = 0; j < image.Header.Width; j++)
+                {
+                    Color c = Color.FromArgb(image.Bitmap[i, j].R, image.Bitmap[i, j].G, image.Bitmap[i, j].B);
+                    pic.SetPixel(j, i, c);
+                }
+            }
+            
+            pic.Save("testcow.bmp");
+            
             string GetExtension(string path)
             {
                 return path.Substring(path.LastIndexOf('.') + 1);
