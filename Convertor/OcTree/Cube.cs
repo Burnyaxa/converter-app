@@ -1,21 +1,19 @@
 ﻿using Converter.Models;
-using System;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Text;
 
 namespace Converter.OcTree
 {
 	class Cube
 	{
-		Vector3 x1;
-		Vector3 x2;
-		Vector3 x3;
-		Vector3 x4;
-		Vector3 x5;
-		Vector3 x6;
-		Vector3 x7;
-		Vector3 x8;
+		public Vector3 x1;
+		public Vector3 x2;
+		public Vector3 x3;
+		public Vector3 x4;
+		public Vector3 x5;
+		public Vector3 x6;
+		public Vector3 x7;
+		public Vector3 x8;
 
 		List<Triangle> Sides;
 
@@ -83,12 +81,12 @@ namespace Converter.OcTree
 				return false;
 			}
 
-			// At this stage we can compute t to find out where the intersection point is on the line.
+
 			float t = f * Vector3.Dot(edge2, q);
 			return true;
 		}
 
-		bool IntersectionBetweetRayAndCube(Vector3 rayOrigin, Vector3 rayVector)
+		public bool IntersectionBetweetRayAndCube(Vector3 rayOrigin, Vector3 rayVector)
 		{
 			foreach (Triangle i in Sides)
 			{
