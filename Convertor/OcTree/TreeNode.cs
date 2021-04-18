@@ -33,7 +33,7 @@ namespace Converter.OcTree
 			DaughterNodes = new List<TreeNode>();
 		}
 
-		void Rebuild(float min)
+		public void Rebuild(float min)
 		{
 			float minXnew, maxXnew, minYnew, maxYnew, minZnew, maxZnew;
 
@@ -161,7 +161,7 @@ namespace Converter.OcTree
 			DaughterNodes[7].Rebuild(min);
 		}
 
-		void FindIntesections(Vector3 rayOrigin, Vector3 rayVector, List<Triangle> result)
+		public void FindIntesections(Vector3 rayOrigin, Vector3 rayVector, List<Triangle> result)
 		{
 
 			foreach (Triangle i in Triangles)
@@ -179,7 +179,7 @@ namespace Converter.OcTree
 
 		}
 
-		int PositionFinder(Vector3 X, Vector3 center)
+		public int PositionFinder(Vector3 X, Vector3 center)
 		{
 			if (X.Z > center.Z)
 			{
