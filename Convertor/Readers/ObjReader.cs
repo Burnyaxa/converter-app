@@ -4,7 +4,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Text;
 using Converter.ImageBase;
 using Converter.ImageConcrete;
 using Converter.Interfaces;
@@ -17,10 +16,10 @@ namespace Converter.Readers
         private readonly IRenderer _renderer;
         private readonly IVectorConverter _converter;
 
-        public List<Vector3> Vertexes { get; private set; }
-        public List<Vector3> Normals { get; private set; }
-        public List<List<Vertex>> Faces { get; private set; }
-        public List<Triangle> Triangles { get; private set; }
+        private List<Vector3> Vertexes { get; set; }
+        private List<Vector3> Normals { get; set; }
+        private List<List<Vertex>> Faces { get; set; }
+        private List<Triangle> Triangles { get; set; }
 
         public ObjReader(IRenderer renderer, IVectorConverter converter)
         {
@@ -59,32 +58,21 @@ namespace Converter.Readers
                 }
             }
 
-            foreach (var face in Faces)
+            foreach (var triangle in Faces.Select(face => new Triangle(
+                Vertexes[face[0].V],
+                Vertexes[face[1].V],
+                Vertexes[face[2].V],
+                Normals[face[0].Vn],
+                Normals[face[1].Vn],
+                Normals[face[2].Vn])))
             {
-                var triangle = new Triangle(
-                    Vertexes[face[0].V],
-                    Vertexes[face[1].V],
-                    Vertexes[face[2].V],
-                    Normals[face[0].Vn],
-                    Normals[face[1].Vn],
-                    Normals[face[2].Vn]);
                 Triangles.Add(triangle);
             }
 
             var vectorColors = _renderer.Render(Triangles);
             var colors = _converter.ConvertFromVectorToColors(vectorColors);
-            var cool = new List<Color>();
-            for (int i = 0; i < colors.GetLength(0); i++)
-            {
-                for (int j = 0; j < colors.GetLength(1); j++)
-                {
-                    if (colors[i, j].R != 255 && colors[i, j].G != 255 && colors[i, j].B != 255)
-                    {
-                        cool.Add(colors[i,j]);
-                    }
-                }
-            }
-            ImageObj result = new ImageObj()
+            
+            var result = new ImageObj()
             {
                 Bitmap = colors,
                 Header = new HeaderObj()

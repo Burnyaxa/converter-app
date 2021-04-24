@@ -1,10 +1,7 @@
 ﻿using Converter.ImageBase;
 using Converter.ImageConcrete;
-using Converter.Interfaces;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace Converter.Readers
 {

@@ -1,8 +1,5 @@
 ﻿using Converter.Interfaces;
 using Converter.Readers;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Converter.Writers
 {
@@ -13,6 +10,7 @@ namespace Converter.Writers
             return imageType switch
             {
                 ImageType.Gif => new GifWriter(),
+                ImageType.Bmp => new BmpWriter(),
                 _ => null
             };
         }

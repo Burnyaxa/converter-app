@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Converter.Interfaces;
+﻿using Converter.Interfaces;
 
 namespace Converter.Providers
 {

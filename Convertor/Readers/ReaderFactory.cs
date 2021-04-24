@@ -1,9 +1,4 @@
 ﻿using Converter.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Converter.Providers;
-using Converter.Renderers;
 
 namespace Converter.Readers
 {
@@ -11,18 +6,25 @@ namespace Converter.Readers
     {
         Ppm,
         Obj,
-        Gif
+        Gif,
+        Bmp
     }
 
     public class ReaderFactory : IFactory<IImageReader>
     {
+        private readonly IRenderer _renderer;
+        private readonly IVectorConverter _vectorConverter;
+        public ReaderFactory(IRenderer renderer, IVectorConverter vectorConverter)
+        {
+            _renderer = renderer;
+            _vectorConverter = vectorConverter;
+        }
         public IImageReader Create(ImageType imageType)
         {
             return imageType switch
             {
                 ImageType.Ppm => new PpmReader(),
-                ImageType.Obj => new ObjReader(new Renderer(new CameraPositionProvider(), new CameraDirectionProvider(),
-                    new ScreenProvider(), new ColorProvider(), new LightsProvider()), new VectorConverter()),
+                ImageType.Obj => new ObjReader(_renderer, _vectorConverter),
                 _ => null
             };
         }

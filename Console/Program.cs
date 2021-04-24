@@ -1,6 +1,7 @@
 ﻿using System;
-using Converter;
-
+using Converter.Interfaces;
+using Converter.ServiceProviders;
+using Ninject;
 namespace ConsoleInterface
 {
     class Program
@@ -9,13 +10,16 @@ namespace ConsoleInterface
         {
             try
             {
-                args = new string[]{
-                    "--source=cow.obj",
-                    "--goal-format=gif",
-                    "--output=newcow"
-                };
+                // args = new string[]{
+                //     "--source=cow.obj",
+                //     "--goal-format=bmp",
+                //     "--output=newcow"
+                // };
                 var value = KeyHandler.GetValues(args);
-                ConversionFacade.InitiateConversion(value.source, value.destination, value.format);
+                IKernel kernel = new StandardKernel(new ServiceProvider());
+
+                var facade = kernel.Get<IFacade>();
+                facade.InitiateConversion(value.source, value.destination, value.format);
             }
             catch (Exception e)
             {

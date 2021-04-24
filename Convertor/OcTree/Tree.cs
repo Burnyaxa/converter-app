@@ -1,28 +1,27 @@
 ﻿using Converter.Models;
-using System;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Text;
+using Converter.Interfaces;
 
 namespace Converter.OcTree
 {
-	public class Tree
+	public class Tree : ITree
 	{
 		private float maxSize;
 		private float minSize;
 		private TreeNode head;
-		Tree(float max, List<Triangle> allTriangles)
+		
+		public void Initialize(float max, List<Triangle> triangles)
 		{
 			minSize = max / 10;
 			maxSize = max;
-			head = new TreeNode(-max, max, -max, max, -max, max);
-			head.Triangles = allTriangles;
+			head = new TreeNode(-max, max, -max, max, -max, max) {Triangles = triangles};
 			head.Rebuild(minSize);
 		}
 
-		void FindIntersections(Vector3 rayOrigin, Vector3 rayVector, List<Triangle> result)
+		public void FindIntersections(Vector3 rayOrigin, Vector3 rayVector, List<Triangle> result)
 		{
-			head.FindIntesections(rayOrigin, rayVector, result);
+			head.FindIntersections(rayOrigin, rayVector, result);
 		}
 	}
 }

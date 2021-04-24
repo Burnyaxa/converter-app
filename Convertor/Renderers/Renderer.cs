@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
 using Converter.Interfaces;
 using Converter.Models;
@@ -15,23 +15,38 @@ namespace Converter.Renderers
         private readonly IScreenProvider _screenProvider;
         private readonly IColorProvider _colorProvider;
         private readonly ILightsProvider _lightsProvider;
+        private readonly ITreeProvider _treeProvider;
+
+        private readonly List<Light> _lights;
+        private readonly ITree _tree;
+        
         private const float Epsilon = 0.0000001f;
 
         public Renderer(ICameraPositionProvider positionProvider, ICameraDirectionProvider directionProvider,
-            IScreenProvider screenProvider, IColorProvider colorProvider, ILightsProvider lightsProvider)
+            IScreenProvider screenProvider, IColorProvider colorProvider, ILightsProvider lightsProvider,
+            ITreeProvider treeProvider)
         {
             _positionProvider = positionProvider;
             _directionProvider = directionProvider;
             _screenProvider = screenProvider;
             _colorProvider = colorProvider;
             _lightsProvider = lightsProvider;
+            _treeProvider = treeProvider;
+            _tree = _treeProvider.GetTree();
+            _lights = _lightsProvider.GetLights();
         }
 
 
         public Vector3[,] Render(List<Triangle> triangles)
         {
             Vector3[,] result = Initialize();
-
+            var listA = triangles.Select(x => x.A);
+            var listB = triangles.Select(x => x.B);
+            var listC = triangles.Select(x => x.C);
+            var max = listA.Concat(listB).Concat(listC).Max(x => new[]{Math.Abs(x.X), Math.Abs(x.Y), Math.Abs(x.Z)}.Max());
+            
+            _tree.Initialize(max, triangles);
+            
             Parallel.For(0, _screenProvider.GetHeight(), x =>
             {
                 Parallel.For(0, _screenProvider.GetWidth(), y =>
@@ -44,6 +59,7 @@ namespace Converter.Renderers
             });
             
             var resultReversed = new Vector3[_screenProvider.GetHeight(), _screenProvider.GetWidth()];
+            
             for (int i = 0; i < _screenProvider.GetHeight(); i++)
             {
                 for (int j = 0; j < _screenProvider.GetWidth(); j++)
@@ -56,16 +72,20 @@ namespace Converter.Renderers
 
             void ProcessPixel(int height, int width)
             {
-                float minDistance = Single.MaxValue;
+                float minDistance = float.MaxValue;
                 var currentColor = _colorProvider.GetBackgroundColor();
-                foreach (var triangle in triangles)
+                List<Triangle> resultTriangles = new List<Triangle>();
+                var direction = _directionProvider.GetCameraDirection(height, width,
+                    _screenProvider.GetHeight(), _screenProvider.GetWidth(),
+                    _screenProvider.GetFov());
+                _tree.FindIntersections(_positionProvider.GetCamera(), direction, resultTriangles);
+                
+                foreach (var triangle in resultTriangles)
                 {
                     CastRay(_positionProvider.GetCamera(),
-                        _directionProvider.GetCameraDirection(height, width,
-                            _screenProvider.GetHeight(), _screenProvider.GetWidth(),
-                            _screenProvider.GetFov()),
+                        direction,
                         triangle,
-                        _lightsProvider.GetLights(),
+                        _lights,
                         out var hit,
                         out var color);
 
@@ -86,8 +106,10 @@ namespace Converter.Renderers
                 t = 0;
                 u = 0;
                 v = 0;
+                
                 Vector3 first = triangle.B - triangle.A;
                 Vector3 second = triangle.C - triangle.A;
+                
                 Vector3 pvector = Vector3.Cross(direction, second);
                 
                 float det = Vector3.Dot(first, pvector);

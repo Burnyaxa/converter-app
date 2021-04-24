@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Converter.Interfaces
+﻿namespace Converter.Interfaces
 {
     public interface IScreenProvider
     {

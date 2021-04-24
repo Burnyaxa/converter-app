@@ -1,9 +1,7 @@
 ﻿using Converter.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text;
 
 namespace Converter.OcTree
 {
@@ -51,7 +49,7 @@ namespace Converter.OcTree
 			if (Triangles.Count() < 100 || (maxXnew - minXnew) < min)
 				return;
 
-			DaughterNodes[0] = new TreeNode(minXnew, maxXnew, minYnew, maxYnew, minZnew, maxZnew);
+			DaughterNodes.Add(new TreeNode(minXnew, maxXnew, minYnew, maxYnew, minZnew, maxZnew));
 
 			maxXnew = (SpaceCube.x1.X + SpaceCube.x2.X) * 0.5f;
 			minXnew = SpaceCube.x2.X;
@@ -60,7 +58,7 @@ namespace Converter.OcTree
 			minZnew = (SpaceCube.x1.Z + SpaceCube.x5.Z) * 0.5f;
 			maxZnew = SpaceCube.x1.Z;
 
-			DaughterNodes[1] = new TreeNode(minXnew, maxXnew, minYnew, maxYnew, minZnew, maxZnew);
+			DaughterNodes.Add(new TreeNode(minXnew, maxXnew, minYnew, maxYnew, minZnew, maxZnew));
 
 			maxXnew = (SpaceCube.x1.X + SpaceCube.x2.X) * 0.5f;
 			minXnew = SpaceCube.x2.X;
@@ -69,7 +67,7 @@ namespace Converter.OcTree
 			minZnew = (SpaceCube.x1.Z + SpaceCube.x5.Z) * 0.5f;
 			maxZnew = SpaceCube.x1.Z;
 
-			DaughterNodes[2] = new TreeNode(minXnew, maxXnew, minYnew, maxYnew, minZnew, maxZnew);
+			DaughterNodes.Add(new TreeNode(minXnew, maxXnew, minYnew, maxYnew, minZnew, maxZnew));
 
 			minXnew = (SpaceCube.x3.X + SpaceCube.x4.X) * 0.5f;
 			maxXnew = SpaceCube.x4.X;
@@ -78,7 +76,7 @@ namespace Converter.OcTree
 			minZnew = (SpaceCube.x1.Z + SpaceCube.x5.Z) * 0.5f;
 			maxZnew = SpaceCube.x1.Z;
 
-			DaughterNodes[3] = new TreeNode(minXnew, maxXnew, minYnew, maxYnew, minZnew, maxZnew);
+			DaughterNodes.Add(new TreeNode(minXnew, maxXnew, minYnew, maxYnew, minZnew, maxZnew));
 
 			// 5, 6, 7, 8 oct
 
@@ -89,7 +87,7 @@ namespace Converter.OcTree
 			maxZnew = (SpaceCube.x1.Z + SpaceCube.x5.Z) * 0.5f;
 			minZnew = SpaceCube.x5.Z;
 
-			DaughterNodes[4] = new TreeNode(minXnew, maxXnew, minYnew, maxYnew, minZnew, maxZnew);
+			DaughterNodes.Add(new TreeNode(minXnew, maxXnew, minYnew, maxYnew, minZnew, maxZnew));
 
 			maxXnew = (SpaceCube.x1.X + SpaceCube.x2.X) * 0.5f;
 			minXnew = SpaceCube.x2.X;
@@ -98,7 +96,7 @@ namespace Converter.OcTree
 			maxZnew = (SpaceCube.x1.Z + SpaceCube.x5.Z) * 0.5f;
 			minZnew = SpaceCube.x5.Z;
 
-			DaughterNodes[5] = new TreeNode(minXnew, maxXnew, minYnew, maxYnew, minZnew, maxZnew);
+			DaughterNodes.Add(new TreeNode(minXnew, maxXnew, minYnew, maxYnew, minZnew, maxZnew));
 
 			maxXnew = (SpaceCube.x1.X + SpaceCube.x2.X) * 0.5f;
 			minXnew = SpaceCube.x2.X;
@@ -107,7 +105,7 @@ namespace Converter.OcTree
 			maxZnew = (SpaceCube.x1.Z + SpaceCube.x5.Z) * 0.5f;
 			minZnew = SpaceCube.x5.Z;
 
-			DaughterNodes[6] = new TreeNode(minXnew, maxXnew, minYnew, maxYnew, minZnew, maxZnew);
+			DaughterNodes.Add(new TreeNode(minXnew, maxXnew, minYnew, maxYnew, minZnew, maxZnew));
 
 			minXnew = (SpaceCube.x3.X + SpaceCube.x4.X) * 0.5f;
 			maxXnew = SpaceCube.x4.X;
@@ -116,7 +114,7 @@ namespace Converter.OcTree
 			maxZnew = (SpaceCube.x1.Z + SpaceCube.x5.Z) * 0.5f;
 			minZnew = SpaceCube.x5.Z;
 
-			DaughterNodes[7] = new TreeNode(minXnew, maxXnew, minYnew, maxYnew, minZnew, maxZnew);
+			DaughterNodes.Add(new TreeNode(minXnew, maxXnew, minYnew, maxYnew, minZnew, maxZnew));
 
 			List<Triangle> newVectors = new List<Triangle>();
 
@@ -129,9 +127,9 @@ namespace Converter.OcTree
 				Triangle i = Triangles.Last();
 				Triangles.RemoveAt(Triangles.Count() - 1);
 
-				counter1 = PositionFinder(i.N0, center);
-				counter2 = PositionFinder(i.N1, center);
-				counter3 = PositionFinder(i.N2, center);
+				counter1 = PositionFinder(i.A, center);
+				counter2 = PositionFinder(i.B, center);
+				counter3 = PositionFinder(i.C, center);
 
 				if (counter1 == counter2 && counter2 == counter3)
 					DaughterNodes[counter1].Triangles.Add(i);
@@ -161,7 +159,7 @@ namespace Converter.OcTree
 			DaughterNodes[7].Rebuild(min);
 		}
 
-		public void FindIntesections(Vector3 rayOrigin, Vector3 rayVector, List<Triangle> result)
+		public void FindIntersections(Vector3 rayOrigin, Vector3 rayVector, List<Triangle> result)
 		{
 
 			foreach (Triangle i in Triangles)
@@ -171,9 +169,9 @@ namespace Converter.OcTree
 
 			for (int i = 0; i < 8; i++)
 			{
-				if (DaughterNodes[i] != null && DaughterNodes[i].SpaceCube.IntersectionBetweetRayAndCube(rayOrigin, rayVector))
+				if (DaughterNodes[i] != null && DaughterNodes[i].SpaceCube.IntersectionBetweenRayAndCube(rayOrigin, rayVector))
 				{
-					DaughterNodes[i].FindIntesections(rayOrigin, rayVector, result);
+					DaughterNodes[i].FindIntersections(rayOrigin, rayVector, result);
 				}
 			}
 
@@ -185,36 +183,18 @@ namespace Converter.OcTree
 			{
 				if (X.Y > center.Y)
 				{
-					if (X.X > center.X)
-						return 0;
-					else
-						return 1;
+					return X.X > center.X ? 0 : 1;
 				}
-				else
-				{
-					if (X.X > center.X)
-						return 3;
-					else
-						return 2;
-				}
+
+				return X.X > center.X ? 3 : 2;
 			}
-			else
+
+			if (X.Y > center.Y)
 			{
-				if (X.Y > center.Y)
-				{
-					if (X.X > center.X)
-						return 4;
-					else
-						return 5;
-				}
-				else
-				{
-					if (X.X > center.X)
-						return 7;
-					else
-						return 6;
-				}
+				return X.X > center.X ? 4 : 5;
 			}
+
+			return X.X > center.X ? 7 : 6;
 		}
 	}
 }

@@ -15,7 +15,7 @@ namespace Converter.OcTree
 		public Vector3 x7;
 		public Vector3 x8;
 
-		List<Triangle> Sides;
+		readonly List<Triangle> Sides;
 
 		public Cube(Vector3 x, Vector3 y, Vector3 z, Vector3 k, Vector3 n1, Vector3 y1, Vector3 z1, Vector3 k1)
 		{
@@ -86,7 +86,7 @@ namespace Converter.OcTree
 			return true;
 		}
 
-		public bool IntersectionBetweetRayAndCube(Vector3 rayOrigin, Vector3 rayVector)
+		public bool IntersectionBetweenRayAndCube(Vector3 rayOrigin, Vector3 rayVector)
 		{
 			foreach (Triangle i in Sides)
 			{
